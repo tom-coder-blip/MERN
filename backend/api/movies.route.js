@@ -20,4 +20,4 @@ router
     .put(ReviewsController.apiUpdateReview)
     .delete(ReviewsController.apiDeleteReview)
 
-export default router
+export default router 

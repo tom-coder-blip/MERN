@@ -1,11 +1,16 @@
+// This file connects to the MongoDB movies collection.
+// It provides functions to get movie data from the database.
+// DAO = Data Access Object
+// Allows interaction between the app and database
+
 import mongodb from "mongodb"
 const ObjectId = mongodb.ObjectID
 
-let movies 
+let movies //This will hold a reference to the movies collection in MongoDB
 
 export default class MoviesDAO{ 
-    static async injectDB(conn){ 
-        if(movies){ 
+    static async injectDB(conn){  //Initialize a connection to the movies collection 
+        if(movies){  
             return
         }
         try{ 
@@ -17,6 +22,7 @@ export default class MoviesDAO{
         }
     }
 
+    //Finds one movie by its ID.
     static async getMovieById(id){        
         try{                    
             //use aggregate to provide a sequence of data aggregation operations                             
@@ -34,7 +40,7 @@ export default class MoviesDAO{
                         foreignField: 'movie_id',
                         as: 'reviews',
                     }
-                }       
+                } //Then, joins (links) all the reviews that belong to that movie.      
             ]).next()            
         }
         catch(e){
@@ -45,7 +51,7 @@ export default class MoviesDAO{
 
 
     static async getMovies({// default filter
-        filters = null,
+        filters = null, //Accepts optional filters (title or rated)
         page = 0,
         moviesPerPage = 20, // will only get 20 movies at once
     } = {}){
@@ -74,6 +80,7 @@ export default class MoviesDAO{
         }
     }
 
+    //Returns all unique movie ratings (e.g., G, PG, PG-13, R) from the collection.
     static async getRatings(){
         let ratings = []
         try{
