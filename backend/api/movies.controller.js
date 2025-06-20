@@ -1,7 +1,11 @@
-import MoviesDAO from '../dao/moviesDAO.js' //interact with the database 
+// a Controller in a Node.js Express web app for a movie database.
+// It receives requests from users, calls the right functions in the DAO (which talks to the database), and then sends back a response (usually in JSON format).
+// import MoviesDAO from '../dao/moviesDAO.js' //interact with the database 
 
+//handles what should happen when the client makes API requests about movies.
 export default class MoviesController{
 
+    //This function handles a request to get a list of movies
     static async apiGetMovies(req,res,next){
         //displays whats typed in or 20 movies/page
         const moviesPerPage = req.query.moviesPerPage ? parseInt(req.query.moviesPerPage) : 20
@@ -10,9 +14,11 @@ export default class MoviesController{
 
         //whats typed is pushed to filters object, updating values
         let filters = {} 
+        //If the URL includes ?rated=PG, it will filter by rating.
         if(req.query.rated){            
             filters.rated = req.query.rated
         } 
+        //If ?title=Batman, it will filter by movie title.
         else if(req.query.title){            
             filters.title = req.query.title            
         }
@@ -32,7 +38,7 @@ export default class MoviesController{
     }
     static async apiGetMovieById(req,res, next){
         try{
-            //look for parameters, whats typed atthe end of the url
+            //look for parameters, whats typed at the end of the url
             let id = req.params.id || {}
             //id is the identifier
             let movie = await MoviesDAO.getMovieById(id)

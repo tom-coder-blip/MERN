@@ -8,32 +8,33 @@ const ObjectId = mongodb.ObjectID
 
 let movies //This will hold a reference to the movies collection in MongoDB
 
-export default class MoviesDAO{ 
-    static async injectDB(conn){  //Initialize a connection to the movies collection 
-        if(movies){  
+export default class MoviesDAO {
+    static async injectDB(conn) {  //Initialize a connection to the movies collection 
+        if (movies) {
             return
         }
-        try{ 
+        try {
             movies = await conn.db(process.env.MOVIEREVIEWS_NS)
-					.collection('movies')
-        } 
-        catch(e){
+                .collection('movies')
+        }
+        catch (e) {
             console.error(`unable to connect in MoviesDAO: ${e}`)
         }
     }
 
     //Finds one movie by its ID.
-    static async getMovieById(id){        
-        try{                    
+    static async getMovieById(id) {
+        try {
             //use aggregate to provide a sequence of data aggregation operations                             
             return await movies.aggregate([
                 {   //look for movie doc that matches specified id
                     $match: {
                         _id: new ObjectId(id),
                     }
-                }    ,
+                },
                 // joins id field from movie doc to movie_id in reviews collection
-                { $lookup:
+                {
+                    $lookup:
                     {
                         from: 'reviews',
                         localField: '_id',
@@ -41,9 +42,9 @@ export default class MoviesDAO{
                         as: 'reviews',
                     }
                 } //Then, joins (links) all the reviews that belong to that movie.      
-            ]).next()            
+            ]).next()
         }
-        catch(e){
+        catch (e) {
             console.error(`something went wrong in getMovieById: ${e}`)
             throw e
         }
@@ -54,45 +55,44 @@ export default class MoviesDAO{
         filters = null, //Accepts optional filters (title or rated)
         page = 0,
         moviesPerPage = 20, // will only get 20 movies at once
-    } = {}){
-        let query 
-        if(filters){ 
-            if("title" in filters){ 
-                query = { $text: { $search: filters['title']}}
-            }else if("rated" in filters){ 
-                query = { "rated": { $eq: filters['rated']}} 
-            }                                
+    } = {}) {
+        let query
+        if (filters) {
+            if ("title" in filters) {
+                query = { $text: { $search: filters['title'] } }
+            } else if ("rated" in filters) {
+                query = { "rated": { $eq: filters['rated'] } }
+            }
         }
 
-        let cursor 
-        try{
-			cursor = await movies
-					.find(query)
-					.limit(moviesPerPage)
-					.skip(moviesPerPage * page)           
+        let cursor
+        try {
+            cursor = await movies
+                .find(query)
+                .limit(moviesPerPage)
+                .skip(moviesPerPage * page)
             const moviesList = await cursor.toArray()
             const totalNumMovies = await movies.countDocuments(query)
-            return {moviesList, totalNumMovies}
+            return { moviesList, totalNumMovies }
         }
-        catch(e){
+        catch (e) {
             console.error(`Unable to issue find command, ${e}`)
-            return { moviesList: [], totalNumMovies: 0}
+            return { moviesList: [], totalNumMovies: 0 }
         }
     }
 
     //Returns all unique movie ratings (e.g., G, PG, PG-13, R) from the collection.
-    static async getRatings(){
+    static async getRatings() {
         let ratings = []
-        try{
+        try {
             //look for all possible ratings for all movies in movie object
-            ratings = await movies.distinct("rated") 
+            ratings = await movies.distinct("rated")
             return ratings
         }
-        catch(e){
+        catch (e) {
             //error message
             console.error(`unable to get ratings, ${e}`)
             return ratings
         }
     }
-
 }

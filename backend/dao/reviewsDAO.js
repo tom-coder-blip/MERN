@@ -20,12 +20,12 @@ export default class ReviewsDAO {
     static async addReview(movieId, user, review) {//creating a review
         try {
             const date = new Date();
-            const reviewDoc = {//create a reviewDoc document object
+            const reviewDoc = {
                 name: user.name,
                 user_id: user._id,
                 date: date,
                 review: review,
-                movie_id: new ObjectId(movieId)//convert movieId string to a MongoDB object id
+                movie_id: new ObjectId(movieId)
             };
             return await reviews.insertOne(reviewDoc)
         }
