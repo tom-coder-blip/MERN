@@ -1,6 +1,8 @@
 import ReviewsDAO from '../dao/reviewsDAO.js';
 
 export default class ReviewsController {
+
+    //This method adds a new review to the database.
     static async apiPostReview(req, res, next) {//apiPostReview method
         try {
             const movieId = req.body.movie_id;//get info from req.body
@@ -47,6 +49,7 @@ export default class ReviewsController {
     }
 }
 
+    //This method deletes a review, but only if the correct user requests it.
     static async apiDeleteReview(req, res, next) {//apiDeleteReview method
     try {
         const reviewId = req.body.review_id;//extract reviewId

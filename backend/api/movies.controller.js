@@ -1,6 +1,6 @@
 // a Controller in a Node.js Express web app for a movie database.
 // It receives requests from users, calls the right functions in the DAO (which talks to the database), and then sends back a response (usually in JSON format).
-// import MoviesDAO from '../dao/moviesDAO.js' //interact with the database 
+import MoviesDAO from '../dao/moviesDAO.js' //interact with the database 
 
 //handles what should happen when the client makes API requests about movies.
 export default class MoviesController{
