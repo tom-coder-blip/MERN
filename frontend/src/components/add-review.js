@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
+// //This component:
+// Displays a form to create or edit a movie review.
+// Uses React Hooks like useState to manage the review state.
+// Submits the review to the backend API using MovieDataService.
+
+import React, { useState} from 'react';
 import MovieDataService from '../services/movies';
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
+import GreetingBanner from './greetingBanner';
 
 
+//This is a functional component that receives props
 const AddReview = props => {
 
    let editing = false
    let initialReviewState = ''
 
    //checks state to allow for editting to occur
+   //If the component receives a currentReview via props.location.state, it means we’re in edit mode.
    if (props.location.state && props.location.state.currentReview) {
       editing = true
       initialReviewState = props.location.state.currentReview.review
    }
 
+   //review: holds the text of the review.
    const [review, setReview] = useState(initialReviewState)
-   //keeps track if review's submitted
+   //submitted: becomes true after the user submits the review successfully.
    const [submitted, setSubmitted] = useState(false)
 
+
+   //Updates the review state as the user types in the form field.
    const onChangeReview = e => {
       const review = e.target.value
       setReview(review);
@@ -82,6 +93,9 @@ const AddReview = props => {
                <Button variant="primary" onClick={saveReview}>
                   Submit
                </Button>
+               <div className="mt-4">
+                  <GreetingBanner user={props.user} />
+               </div>
             </Form>
          )}
       </div>

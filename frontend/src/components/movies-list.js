@@ -8,200 +8,216 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 
+// ADDED: track total movies
+const MoviesList = (props) => {
+  const [movies, setMovies] = useState([]);
+  const [searchTitle, setSearchTitle] = useState("");
+  const [searchRating, setSearchRating] = useState("");
+  const [ratings, setRatings] = useState(["All Ratings"]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [entriesPerPage, setEntriesPerPage] = useState(0);
+  const [currentSearchMode, setCurrentSearchMode] = useState("");
+  const [totalMovies, setTotalMovies] = useState(0);
 
-const MoviesList = props => {
+  //Whenever the user switches to a different search mode, reset the page to 0.
+  useEffect(() => {
+    setCurrentPage(0);
+    // eslint-disable-next-line
+  }, [currentSearchMode]);
 
-   const [movies, setMovies] = useState([])
-   const [searchTitle, setSearchTitle] = useState("")
-   const [searchRating, setSearchRating] = useState("")
-   const [ratings, setRatings] = useState(["All Ratings"])
-   //ch 23
-   const [currentPage, setCurrentPage] = useState(0);//keep track of current page shown
-   const [entriesPerPage, setEntriesPerPage] = useState(0); //particular page
-   //ch 24
-   const [currentSearchMode, setCurrentSearchMode] = useState("");//can findByTitle or by Rating
+  useEffect(() => {
+    retrieveNextPage();
+    // eslint-disable-next-line
+  }, [currentPage]);
 
-   useEffect(() => {
-      setCurrentPage(0)
-      //page is changed and can be filtered according title etc.
-      // eslint-disable-next-line 
-   }, [currentSearchMode])
-   //ch 23
+  useEffect(() => {
+    retrieveMovies();
+    retrieveRatings();
+    // eslint-disable-next-line
+  }, []);
 
-   //retrieve next page is rendered once only
-   useEffect(() => {
-      // retrieveMovies()
-      retrieveNextPage()
-      //passing current page
-      // eslint-disable-next-line 
-   }, [currentPage])
+  useEffect(() => {
+    console.log("Title:", searchTitle);
+    console.log("Ratings:", ratings)
+  }, [searchTitle, ratings]);
 
-   //uses if logic to invoke functions
-   //ch 23
-   const retrieveNextPage = () => {
-      if (currentSearchMode === 'findByTitle')
-         findByTitle()
-      else if (currentSearchMode === 'findByRating')
-         findByRating()
-      else
-         retrieveMovies()
-   }
+  //Depending on the current search mode, get the next page results properly.
+  const retrieveNextPage = () => {
+    if (currentSearchMode === 'findByTitle') findByTitle();
+    else if (currentSearchMode === 'findByRating') findByRating();
+    else retrieveMovies();
+  };
 
-   useEffect(() => {
-      retrieveMovies()
-      retrieveRatings()
-      //empty array used to invoke functions only once
-      // eslint-disable-next-line 
-   }, [])
+  const retrieveMovies = () => {
+    setCurrentSearchMode("");
+    MovieDataService.getAll(currentPage)
+      .then(response => {
+        setMovies(response.data.movies);
+        setCurrentPage(response.data.page);
+        setEntriesPerPage(response.data.entries_per_page);
+        setTotalMovies(response.data.total_results);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
-   
-   const retrieveMovies = () => {
-      //ch 23
-      setCurrentSearchMode("")
-      MovieDataService.getAll(currentPage)
-         .then(response => {
-            console.log(response.data)
-            setMovies(response.data.movies) // assign to movies state
-            setCurrentPage(response.data.page)
-            //ch 23
-            setEntriesPerPage(response.data.entries_per_page)
-         })
-         .catch(e => {
-            console.log(e)
-         })
-   }
+  const retrieveRatings = () => {
+    MovieDataService.getRatings()
+      .then(response => {
+        setRatings(["All Ratings"].concat(response.data));
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
-   const retrieveRatings = () => {
-      MovieDataService.getRatings()
-         .then(response => {
-            console.log(response.data)
-            setRatings(["All Ratings"].concat(response.data))
-         })
-         .catch(e => {
-            console.log(e)
-         })
-   }
+  const onChangeSearchTitle = (e) => {
+    setSearchTitle(e.target.value);
+  };
 
-   const onChangeSearchTitle = e => {
-      const searchTitle = e.target.value
-      setSearchTitle(searchTitle);
-   }
+  const onChangeSearchRating = (e) => {
+    setSearchRating(e.target.value);
+  };
 
-   const onChangeSearchRating = e => {
-      const searchRating = e.target.value
-      setSearchRating(searchRating);
-   }
+  //Pass the page number when searching:
+  const find = (query, by) => {
+    MovieDataService.find(query, by, currentPage)
+      .then(response => {
+        setMovies(response.data.movies);
+        setEntriesPerPage(response.data.entries_per_page);
+        setTotalMovies(response.data.total_results);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
+  const findByTitle = () => {
+    setCurrentSearchMode("findByTitle");
+    find(searchTitle, "title");
+  };
 
+  const findByRating = () => {
+    setCurrentSearchMode("findByRating");
+    if (searchRating === "All Ratings") {
+      retrieveMovies();
+    } else {
+      find(searchRating, "rated");
+    }
+  };
 
-   const find = (query, by) => {
-      //ch 23
-      MovieDataService.find(query, by, currentPage)//adding currentPage argument
-         .then(response => {
-            console.log(response.data)
-            setMovies(response.data.movies)
-         })
-         .catch(e => {
-            console.log(e)
-         })
-   }
-   // find function sypported by below two methods
-   const findByTitle = () => {
-      //ch 24
-      setCurrentSearchMode("findByTitle")
-      find(searchTitle, "title")// Pass the searchTitle and currentPage to the API call
-   }
-   const findByRating = () => {
-      //ch 24
-      setCurrentSearchMode("findByRating")
-      if (searchRating === "All Ratings") {
-         retrieveMovies()
-      }
-      else {
-         find(searchRating, "rated")
-      }
-   }
+  const clearForm = () => {
+    setSearchTitle("");
+    setSearchRating("All Ratings");
+    setCurrentSearchMode("");
+    setCurrentPage(0);
+    setMovies([]);
+  };
 
-   return (
-      <div className="App">
-         <Container>
-            <Form>
-               <Row>
-                  <Col>
-                     <Form.Group>
-                        <Form.Control
-                           type="text"
-                           placeholder="Search by title"
-                           value={searchTitle}
-                           onChange={onChangeSearchTitle}
-                        />
-                     </Form.Group>
-                     <Button
-                        variant="primary"
-                        type="button"
-                        onClick={findByTitle}
-                     >
-                        Search
-                     </Button>
-                  </Col>
-                  <Col>
-                     <Form.Group>
-                        <Form.Control as="select" onChange={onChangeSearchRating} >
-                           {ratings.map(rating => {
-                              return (
-                                 <option value={rating}>{rating}</option>
-                              )
-                           })}
-                        </Form.Control>
-                     </Form.Group>
-                     <Button
-                        variant="primary"
-                        type="button"
-                        onClick={findByRating}
-                     >
-                        Search
-                     </Button>
-                  </Col>
-               </Row>
-            </Form>
+  return (
+    <div className="App">
+      
+      <Container>
+        <Form>
+          <Row className="align-items-end">
+            <Col md={4}>
+              <Form.Group>
+                <Form.Control
+                  type="text"
+                  placeholder="Search by title"
+                  value={searchTitle}
+                  onChange={onChangeSearchTitle}
+                />
+              </Form.Group>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={findByTitle}
+                className="mt-2"
+              >
+                Search
+              </Button>
+            </Col>
 
-            <Row>
-               {movies.map((movie) => {
-                  return (
-                     <Col>
-                        <Card style={{ width: '18rem' }}>
-                           <Card.Img src={movie.poster + "/100px180"} />
-                           <Card.Body>
-                              <Card.Title>{movie.title}</Card.Title>
-                              <Card.Text>
-                                 Rating: {movie.rated}
-                              </Card.Text>
-                              <Card.Text>
-                                 {movie.plot}
-                              </Card.Text>
-                              <Link to={"/movies/" + movie._id} >View Reviews</Link>
-                           </Card.Body>
-                        </Card>
-                     </Col>
-                  )
-               })}
-            </Row>
+            <Col md={4}>
+              <Form.Group>
+                <Form.Control
+                  as="select"
+                  value={searchRating}
+                  onChange={onChangeSearchRating}
+                >
+                  {ratings.map((rating, index) => (
+                    <option key={index} value={rating}>{rating}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={findByRating}
+                className="mt-2"
+              >
+                Search
+              </Button>
+            </Col>
 
-         </Container><br />
-         {/* ch 23 */}
-         Showing page: {currentPage}
-         <Button
+            <Col md={4}>
+              <Button
+                variant="danger"
+                type="button"
+                onClick={clearForm}
+                className="mt-2"
+              >
+                Clear
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+
+        <Row className="mt-4">
+          {movies.map((movie) => (
+            <Col key={movie._id} md={4} className="mb-4">
+              <Card style={{ width: '18rem' }}>
+                <Card.Img src={movie.poster + "/100px180"} />
+                <Card.Body>
+                  <Card.Title>{movie.title}</Card.Title>
+                  <Card.Text>Rating: {movie.rated}</Card.Text>
+                  <Card.Text>{movie.plot}</Card.Text>
+                  <Link to={"/movies/" + movie._id}>View Reviews</Link>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+
+        <div className="text-center mt-4">
+          <p>Showing page: {currentPage + 1}</p>
+          <p>
+            {
+              totalMovies - (currentPage + 1) * entriesPerPage > 0
+                ? `${totalMovies - (currentPage + 1) * entriesPerPage} movies remaining`
+                : "No more movies remaining"
+            }
+          </p>
+
+          <Button
             variant="link"
-            onClick={() => { setCurrentPage(currentPage + 1) }}
-         >
-            Get next {entriesPerPage} results
-         </Button>
-      </div>
-   );
-}
-
+            onClick={() => {
+              if ((currentPage + 1) * entriesPerPage < totalMovies) {
+                setCurrentPage(currentPage + 1);
+              }
+            }}
+            disabled={(currentPage + 1) * entriesPerPage >= totalMovies}
+          >
+            {(currentPage + 1) * entriesPerPage >= totalMovies
+              ? "No More Results"
+              : `Get next ${entriesPerPage} results`}
+          </Button>
+        </div>
+      </Container>
+    </div>
+  );
+};
 
 export default MoviesList;
-
-
-

@@ -12,7 +12,7 @@ export default class ReviewsController {
                 _id: req.body.user_id
             };
             const date = new Date();
-            const ReviewResponse = await ReviewsDAO.addReview(//send info to ReviewsDAO
+            const ReviewResponse = await ReviewsDAO.addReview(//send info to MoviesDAO
                 movieId,
                 userInfo,
                 review,
@@ -65,5 +65,6 @@ export default class ReviewsController {
         console.error(`Error deleting review: ${e.message}`);
         res.status(500).json({ error: e.message });
     }
+  }
 }
-}
+

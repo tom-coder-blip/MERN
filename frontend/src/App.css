@@ -2,6 +2,20 @@
   text-align: center;
 }
 
+/* App header - dark gradient with smooth fade-in */
+.App-header {
+  background: linear-gradient(135deg, #1c1c1c, #2e2e2e);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #f8f9fa;
+  animation: fadeIn 1.2s ease;
+}
+
+/* App logo spinning animation (unchanged) */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -13,26 +27,130 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* App link styling with hover effect */
+.App-link {
+  color: #0dcaf0;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.App-link:hover {
+  color: #66eaff;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Contact container updated to dark theme */
+.contact-container {
+  background: linear-gradient(135deg, #2e2e2e, #3b3b3b);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 600px;
+  margin: 60px auto;
+  color: #f8f9fa;
+  animation: fadeIn 1.2s ease-in-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+  color: #0dcaf0; /* Accent color */
+}
+
+.contact-container label {
+  font-weight: 500;
+  margin-top: 15px;
+  display: block;
+}
+
+.contact-container input,
+.contact-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 20px;
+  background-color: #444; /* Darker input bg */
+  color: #f8f9fa;
+}
+
+.contact-container button {
+  background-color: #0dcaf0;
+  border: none;
+  color: #1c1c1c;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.contact-container button:hover {
+  background-color: #66eaff;
+}
+
+/* Hover effect for contact container */
+.contact-container:hover {
+  transform: scale(1.03);
+  box-shadow: 0 15px 40px rgba(13, 202, 240, 0.6); /* cyan glow */
+}
+
+/* Review card - updated dark hover */
+.review-card {
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #a5a1a1;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.review-card:hover {
+  background-color: #fdfdfd;
+}
+
+.card {
+  background-color: #2e2e2e; /* Dark card */
+  color: #414d59; /* Light text */
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.card a {
+  color: #0dcaf0;
+}
+
+.card a:hover {
+  color: #66eaff;
+}
+
+.btn-primary {
+  background-color: #0dcaf0;
+  border: none;
+  color: #1c1c1c;
+}
+
+.btn-primary:hover {
+  background-color: #66eaff;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #e4606d;
 }

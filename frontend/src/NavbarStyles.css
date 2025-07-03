@@ -1,0 +1,66 @@
+/* Fade-in animation */
+@keyframes fadeInNavbar {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Navbar container styling */
+.custom-navbar {
+  background: linear-gradient(90deg, #1c1c1c, #2e2e2e);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0.6rem 1rem;
+  animation: fadeInNavbar 1s ease forwards;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Brand title */
+.custom-brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0dcaf0 !important;
+}
+
+/* Custom nav link */
+.nav-link-custom {
+  color: #f8f9fa !important; /* light text */
+  font-weight: 500;
+  margin: 0 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link-custom:hover {
+  color: #0dcaf0 !important;
+}
+
+/* Buttons in navbar */
+.navbar .btn {
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.3rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Outline primary button on dark bg */
+.navbar .btn-outline-primary {
+  color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.navbar .btn-outline-primary:hover {
+  background-color: #0dcaf0;
+  color: #1c1c1c;
+}
+
+/* Outline danger button on dark bg */
+.navbar .btn-outline-danger {
+  color: #ff4d4d;
+  border-color: #ff4d4d;
+}
+
+.navbar .btn-outline-danger:hover {
+  background-color: #ff4d4d;
+  color: #1c1c1c;
+}
+

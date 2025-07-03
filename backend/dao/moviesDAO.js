@@ -95,4 +95,14 @@ export default class MoviesDAO {
             return ratings
         }
     }
+
+        static async addMovie(movieData) {
+        try {
+            return await movies.insertOne(movieData)
+        } catch (e) {
+            console.error(`Unable to add movie: ${e}`)
+            return { error: e }
+        }
+    }
+
 }
